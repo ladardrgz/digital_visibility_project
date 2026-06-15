@@ -1,0 +1,917 @@
+<!doctype html>
+<html lang="es-AR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Demo | Gestor de stock para supermercado</title>
+    <meta name="description" content="Demo estática de una aplicación web para gestionar stock, compras, ventas y alertas de un supermercado.">
+    <link rel="icon" href="img/logo.png">
+    <style>
+      :root {
+        --market: #1F6F54;
+        --market-dark: #143E35;
+        --leaf: #49A078;
+        --mint: #DDF3E8;
+        --amber: #F2B84B;
+        --orange: #D9893D;
+        --red: #D95D55;
+        --blue: #3B7CA6;
+        --paper: #F6F7F1;
+        --white: #FFFFFF;
+        --ink: #1E2522;
+        --muted: #69736E;
+        --line: rgba(31, 111, 84, 0.16);
+        --shadow: 0 22px 64px rgba(20, 62, 53, 0.12);
+        --radius: 12px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        color: var(--ink);
+        background:
+          radial-gradient(circle at top left, rgba(73, 160, 120, 0.24), transparent 34%),
+          linear-gradient(135deg, #102A25 0%, #143E35 38%, #0F211F 100%);
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        line-height: 1.5;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      button,
+      input,
+      select {
+        font: inherit;
+      }
+
+      .app {
+        display: grid;
+        grid-template-columns: 272px minmax(0, 1fr);
+        gap: 18px;
+        min-height: 100vh;
+        padding: 18px;
+      }
+
+      .sidebar,
+      .topbar,
+      .hero,
+      .card,
+      .metric {
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+      }
+
+      .sidebar {
+        position: sticky;
+        top: 18px;
+        align-self: start;
+        display: flex;
+        flex-direction: column;
+        min-height: calc(100vh - 36px);
+        padding: 18px;
+        color: var(--white);
+        background: rgba(15, 33, 31, 0.92);
+        backdrop-filter: blur(14px);
+      }
+
+      .brand {
+        display: grid;
+        gap: 12px;
+        padding: 15px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: var(--radius);
+        background: rgba(255, 255, 255, 0.06);
+      }
+
+      .brand-logo {
+        display: grid;
+        place-items: center;
+        min-height: 68px;
+        border: 1px dashed rgba(255, 255, 255, 0.3);
+        border-radius: var(--radius);
+        color: rgba(255, 255, 255, 0.74);
+        font-size: 0.82rem;
+        font-weight: 900;
+      }
+
+      .brand strong,
+      .brand span {
+        display: block;
+      }
+
+      .brand strong {
+        font-size: 1.14rem;
+        line-height: 1.2;
+      }
+
+      .brand span {
+        color: rgba(255, 255, 255, 0.66);
+        font-size: 0.86rem;
+      }
+
+      .side-nav {
+        display: grid;
+        gap: 7px;
+        margin: 22px 0;
+      }
+
+      .side-nav a {
+        padding: 11px 12px;
+        border-radius: var(--radius);
+        color: rgba(255, 255, 255, 0.68);
+        font-weight: 850;
+      }
+
+      .side-nav a.is-active,
+      .side-nav a:hover {
+        color: var(--white);
+        background: rgba(73, 160, 120, 0.18);
+      }
+
+      .channel-box {
+        display: grid;
+        gap: 8px;
+        margin-top: auto;
+        padding: 14px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: var(--radius);
+        background: rgba(255, 255, 255, 0.06);
+      }
+
+      .channel-box p {
+        margin: 0 0 4px;
+        color: rgba(255, 255, 255, 0.68);
+        font-size: 0.84rem;
+      }
+
+      .channel-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 7px;
+      }
+
+      .channel-tags span {
+        padding: 6px 8px;
+        border-radius: 999px;
+        color: var(--white);
+        background: rgba(255, 255, 255, 0.1);
+        font-size: 0.76rem;
+        font-weight: 900;
+      }
+
+      .workspace {
+        display: grid;
+        gap: 16px;
+        min-width: 0;
+      }
+
+      .topbar {
+        position: sticky;
+        top: 18px;
+        z-index: 10;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 18px;
+        padding: 14px 16px;
+        background: rgba(246, 247, 241, 0.94);
+        backdrop-filter: blur(14px);
+      }
+
+      .topbar h1 {
+        margin: 0;
+        color: var(--market-dark);
+        font-size: 1.14rem;
+      }
+
+      .topbar p {
+        margin: 2px 0 0;
+        color: var(--muted);
+        font-size: 0.88rem;
+      }
+
+      .topbar-actions {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .sync-pill {
+        padding: 9px 11px;
+        border-radius: 999px;
+        color: var(--market);
+        background: rgba(31, 111, 84, 0.1);
+        font-size: 0.84rem;
+        font-weight: 900;
+      }
+
+      .back-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 42px;
+        padding: 10px 13px;
+        border-radius: var(--radius);
+        color: var(--white);
+        background: var(--market);
+        font-weight: 900;
+        transition: background 180ms ease, transform 180ms ease, box-shadow 180ms ease;
+      }
+
+      .back-button:hover,
+      .back-button:focus-visible {
+        background: var(--market-dark);
+        transform: translateY(-2px);
+        box-shadow: 0 16px 34px rgba(20, 62, 53, 0.22);
+      }
+
+      .hero {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 380px;
+        gap: 22px;
+        padding: 24px;
+        overflow: hidden;
+        background:
+          radial-gradient(circle at 85% 16%, rgba(242, 184, 75, 0.26), transparent 24%),
+          linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(221, 243, 232, 0.78)),
+          var(--white);
+      }
+
+      .hero h2 {
+        max-width: 760px;
+        margin: 0 0 12px;
+        color: var(--market-dark);
+        font-size: clamp(2.3rem, 5vw, 4.8rem);
+        line-height: 1.03;
+      }
+
+      .hero p {
+        max-width: 650px;
+        margin: 0;
+        color: rgba(30, 37, 34, 0.72);
+        font-size: 1.05rem;
+      }
+
+      .store-card {
+        overflow: hidden;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--white);
+      }
+
+      .store-card__media {
+        display: grid;
+        place-items: center;
+        min-height: 162px;
+        padding: 20px;
+        color: var(--white);
+        background: linear-gradient(135deg, var(--market), var(--market-dark));
+        text-align: center;
+        font-weight: 900;
+      }
+
+      .store-card__body {
+        padding: 16px;
+      }
+
+      .store-card__body strong {
+        display: block;
+        color: var(--market-dark);
+        font-size: 1.1rem;
+      }
+
+      .store-card__body p {
+        margin: 8px 0 12px;
+        font-size: 0.92rem;
+      }
+
+      .store-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 7px;
+      }
+
+      .store-tags span {
+        padding: 7px 9px;
+        border-radius: 999px;
+        color: var(--market-dark);
+        background: var(--mint);
+        font-size: 0.76rem;
+        font-weight: 900;
+      }
+
+      .metrics {
+        display: grid;
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      .metric,
+      .card {
+        background: rgba(246, 247, 241, 0.96);
+      }
+
+      .metric {
+        min-width: 0;
+        padding: 16px;
+      }
+
+      .metric span,
+      .metric small {
+        display: block;
+        color: var(--muted);
+        font-size: 0.82rem;
+        font-weight: 800;
+      }
+
+      .metric strong {
+        display: block;
+        margin: 8px 0 2px;
+        color: var(--market-dark);
+        font-size: 1.7rem;
+        line-height: 1;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: 1.12fr 0.88fr;
+        gap: 16px;
+      }
+
+      .card {
+        min-width: 0;
+        padding: 18px;
+      }
+
+      .card--wide {
+        grid-column: 1 / -1;
+      }
+
+      .card-head {
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        align-items: flex-start;
+        margin-bottom: 16px;
+      }
+
+      .card h3 {
+        margin: 0;
+        color: var(--market-dark);
+        font-size: 1.22rem;
+      }
+
+      .card-head span {
+        display: block;
+        margin-top: 3px;
+        color: var(--muted);
+        font-size: 0.86rem;
+        font-weight: 750;
+      }
+
+      .bars {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        align-items: end;
+        gap: 8px;
+        height: 180px;
+        padding: 14px;
+        border-radius: var(--radius);
+        background: var(--white);
+      }
+
+      .bars i {
+        display: block;
+        height: var(--h);
+        border-radius: 999px 999px 4px 4px;
+        background: linear-gradient(180deg, var(--leaf), var(--market));
+      }
+
+      .stock-health {
+        display: grid;
+        gap: 12px;
+      }
+
+      .stock-health p {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 120px auto;
+        gap: 12px;
+        align-items: center;
+        margin: 0;
+        padding: 12px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--white);
+      }
+
+      .stock-health strong {
+        color: var(--market-dark);
+        white-space: nowrap;
+      }
+
+      meter {
+        width: 100%;
+        height: 10px;
+      }
+
+      .alert-list,
+      .task-list,
+      .activity-list {
+        display: grid;
+        gap: 10px;
+      }
+
+      .alert-list p,
+      .task-list label,
+      .activity-list li {
+        margin: 0;
+        padding: 12px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--white);
+      }
+
+      .alert-list p {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+      }
+
+      .alert-list strong {
+        color: var(--red);
+      }
+
+      .task-list label {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        font-weight: 800;
+      }
+
+      .task-list input {
+        accent-color: var(--market);
+      }
+
+      .activity-list {
+        padding: 0;
+        margin: 0;
+        list-style: none;
+      }
+
+      .activity-list strong,
+      .activity-list span {
+        display: block;
+      }
+
+      .activity-list span {
+        color: var(--muted);
+        font-size: 0.86rem;
+      }
+
+      .data-table {
+        width: 100%;
+        min-width: 760px;
+        border-collapse: collapse;
+      }
+
+      .table-scroll {
+        overflow-x: auto;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--white);
+      }
+
+      .data-table th,
+      .data-table td {
+        padding: 12px;
+        border-bottom: 1px solid var(--line);
+        text-align: left;
+        vertical-align: middle;
+      }
+
+      .data-table th {
+        color: var(--muted);
+        font-size: 0.76rem;
+        text-transform: uppercase;
+      }
+
+      .badge {
+        display: inline-flex;
+        width: fit-content;
+        padding: 5px 8px;
+        border-radius: 999px;
+        color: var(--market);
+        background: rgba(31, 111, 84, 0.1);
+        font-size: 0.78rem;
+        font-weight: 900;
+        white-space: nowrap;
+      }
+
+      .badge.warn {
+        color: #8A6544;
+        background: rgba(242, 184, 75, 0.18);
+      }
+
+      .badge.danger {
+        color: var(--red);
+        background: rgba(217, 93, 85, 0.12);
+      }
+
+      .badge.blue {
+        color: var(--blue);
+        background: rgba(59, 124, 166, 0.12);
+      }
+
+      .donut-wrap {
+        display: grid;
+        grid-template-columns: 160px minmax(0, 1fr);
+        gap: 20px;
+        align-items: center;
+      }
+
+      .donut {
+        width: 160px;
+        height: 160px;
+        border-radius: 50%;
+        background: conic-gradient(var(--market) 0 42%, var(--amber) 42% 68%, var(--blue) 68% 86%, var(--red) 86% 100%);
+        box-shadow: inset 0 0 0 36px var(--paper);
+      }
+
+      .legend {
+        display: grid;
+        gap: 9px;
+        padding: 0;
+        margin: 0;
+        list-style: none;
+      }
+
+      .legend li {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 800;
+      }
+
+      .legend i {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: var(--market);
+      }
+
+      .legend li:nth-child(2) i { background: var(--amber); }
+      .legend li:nth-child(3) i { background: var(--blue); }
+      .legend li:nth-child(4) i { background: var(--red); }
+
+      .supplier-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      .supplier-grid article {
+        padding: 12px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--white);
+      }
+
+      .supplier-grid strong,
+      .supplier-grid span {
+        display: block;
+      }
+
+      .supplier-grid span {
+        color: var(--muted);
+        font-size: 0.84rem;
+      }
+
+      .mini-form {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      .mini-form label {
+        display: block;
+      }
+
+      .mini-form span {
+        display: block;
+        margin-bottom: 6px;
+        color: var(--market-dark);
+        font-size: 0.82rem;
+        font-weight: 900;
+      }
+
+      .mini-form input,
+      .mini-form select {
+        width: 100%;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        padding: 11px 12px;
+        color: rgba(30, 37, 34, 0.72);
+        background: var(--white);
+      }
+
+      .logo-strip {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 12px;
+      }
+
+      .logo-strip span {
+        padding: 7px 9px;
+        border-radius: 999px;
+        background: var(--white);
+        color: var(--market-dark);
+        font-size: 0.78rem;
+        font-weight: 900;
+      }
+
+      @media (max-width: 1180px) {
+        .app {
+          grid-template-columns: 1fr;
+        }
+
+        .sidebar {
+          position: static;
+          min-height: auto;
+        }
+
+        .side-nav {
+          grid-template-columns: repeat(4, minmax(0, 1fr));
+        }
+
+        .hero,
+        .grid {
+          grid-template-columns: 1fr;
+        }
+
+        .metrics {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+      }
+
+      @media (max-width: 720px) {
+        .app {
+          padding: 10px;
+        }
+
+        .topbar,
+        .card-head,
+        .donut-wrap {
+          align-items: stretch;
+          grid-template-columns: 1fr;
+          flex-direction: column;
+        }
+
+        .topbar-actions {
+          align-items: stretch;
+          flex-direction: column;
+        }
+
+        .side-nav,
+        .metrics,
+        .supplier-grid,
+        .mini-form {
+          grid-template-columns: 1fr;
+        }
+
+        .stock-health p {
+          grid-template-columns: 1fr;
+        }
+
+        .hero h2 {
+          font-size: 2.5rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="brand-logo">Tu logo aparecería aquí</div>
+          <div>
+            <strong>Supermercado de ejemplo</strong>
+            <span>Gestor de stock, compras y reposición</span>
+          </div>
+        </div>
+
+        <nav class="side-nav">
+          <a class="is-active" href="#resumen">Resumen</a>
+          <a href="#stock">Stock</a>
+          <a href="#ventas">Ventas</a>
+          <a href="#reposicion">Reposición</a>
+          <a href="#proveedores">Proveedores</a>
+          <a href="#vencimientos">Vencimientos</a>
+          <a href="#carga">Carga rápida</a>
+          <a href="#canales">Canales</a>
+        </nav>
+
+        <div class="channel-box">
+          <p>Conexiones visibles para el negocio</p>
+          <div class="channel-tags">
+            <span>Google</span>
+            <span>WhatsApp</span>
+            <span>Maps</span>
+            <span>Instagram</span>
+            <span>Mercado Pago</span>
+          </div>
+        </div>
+      </aside>
+
+      <main class="workspace">
+        <header class="topbar">
+          <div>
+            <h1>Stock central · Supermercado</h1>
+            <p>Datos estáticos de demostración · Hoy 18:42 · Sucursal Formosa</p>
+          </div>
+          <div class="topbar-actions">
+            <span class="sync-pill">Sincronizado hace 3 min</span>
+            <a class="back-button" href="index.html#demo">Volver al sitio principal</a>
+          </div>
+        </header>
+
+        <section class="hero" id="resumen">
+          <div>
+            <h2>Un panel para saber qué falta, qué se vende y qué hay que reponer.</h2>
+            <p>La demo muestra cómo un supermercado podría centralizar stock, ventas, vencimientos, proveedores y carga de productos en una sola aplicación web.</p>
+            <div class="logo-strip">
+              <span>Google Business</span>
+              <span>WhatsApp pedidos</span>
+              <span>Maps sucursal</span>
+              <span>Mercado Pago</span>
+            </div>
+          </div>
+          <article class="store-card">
+            <div class="store-card__media">Catálogo público del supermercado</div>
+            <div class="store-card__body">
+              <strong>Ofertas, horarios y productos visibles</strong>
+              <p>Los clientes podrían consultar disponibilidad antes de escribir o acercarse al local.</p>
+              <div class="store-tags">
+                <span>Stock online</span>
+                <span>Precios</span>
+                <span>Promos</span>
+                <span>WhatsApp</span>
+              </div>
+            </div>
+          </article>
+        </section>
+
+        <section class="metrics">
+          <article class="metric"><span>Productos cargados</span><strong>1.284</strong><small>86 actualizados hoy</small></article>
+          <article class="metric"><span>Stock crítico</span><strong>27</strong><small>requieren reposición</small></article>
+          <article class="metric"><span>Ventas del día</span><strong>$1.284.900</strong><small>caja estimada</small></article>
+          <article class="metric"><span>Pedidos WhatsApp</span><strong>43</strong><small>12 pendientes</small></article>
+          <article class="metric"><span>Vencen pronto</span><strong>18</strong><small>lácteos y frescos</small></article>
+          <article class="metric"><span>Proveedores activos</span><strong>14</strong><small>5 entregan mañana</small></article>
+        </section>
+
+        <div class="grid">
+          <section class="card" id="ventas">
+            <div class="card-head">
+              <div><h3>Ventas por día</h3><span>Movimiento estimado de la semana</span></div>
+              <span class="badge">+12%</span>
+            </div>
+            <div class="bars">
+              <i style="--h:48%"></i><i style="--h:64%"></i><i style="--h:58%"></i><i style="--h:72%"></i><i style="--h:69%"></i><i style="--h:88%"></i><i style="--h:76%"></i>
+            </div>
+          </section>
+
+          <section class="card" id="canales">
+            <div class="card-head">
+              <div><h3>Origen de pedidos</h3><span>Canales de consulta y compra</span></div>
+            </div>
+            <div class="donut-wrap">
+              <div class="donut"></div>
+              <ul class="legend">
+                <li><i></i>Mostrador 42%</li>
+                <li><i></i>WhatsApp 26%</li>
+                <li><i></i>Google 18%</li>
+                <li><i></i>Instagram 14%</li>
+              </ul>
+            </div>
+          </section>
+
+          <section class="card" id="stock">
+            <div class="card-head">
+              <div><h3>Salud del stock</h3><span>Indicadores por categoría</span></div>
+            </div>
+            <div class="stock-health">
+              <p><span>Almacén seco</span><meter min="0" max="100" value="82"></meter><strong>82%</strong></p>
+              <p><span>Bebidas</span><meter min="0" max="100" value="64"></meter><strong>64%</strong></p>
+              <p><span>Lácteos</span><meter min="0" max="100" value="31"></meter><strong>31%</strong></p>
+              <p><span>Limpieza</span><meter min="0" max="100" value="44"></meter><strong>44%</strong></p>
+            </div>
+          </section>
+
+          <section class="card" id="reposicion">
+            <div class="card-head">
+              <div><h3>Alertas de reposición</h3><span>Productos que necesitan acción</span></div>
+            </div>
+            <div class="alert-list">
+              <p><span>Leche entera 1L</span><strong>4 u.</strong></p>
+              <p><span>Yerba mate 1kg</span><strong>8 u.</strong></p>
+              <p><span>Lavandina 2L</span><strong>6 u.</strong></p>
+              <p><span>Arroz largo fino</span><strong>9 u.</strong></p>
+            </div>
+          </section>
+
+          <section class="card card--wide">
+            <div class="card-head">
+              <div><h3>Inventario operativo</h3><span>Datos estáticos de productos para la demostración</span></div>
+            </div>
+            <div class="table-scroll">
+              <table class="data-table">
+                <thead>
+                  <tr><th>Producto</th><th>Categoría</th><th>Stock</th><th>Mínimo</th><th>Estado</th><th>Proveedor</th><th>Última venta</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td>Leche entera 1L</td><td>Lácteos</td><td>4</td><td>20</td><td><span class="badge danger">Crítico</span></td><td>Lácteos Norte</td><td>Hoy 17:48</td></tr>
+                  <tr><td>Yerba mate 1kg</td><td>Almacén</td><td>8</td><td>15</td><td><span class="badge warn">Bajo</span></td><td>Distribuidora Sol</td><td>Hoy 16:22</td></tr>
+                  <tr><td>Aceite girasol 900ml</td><td>Almacén</td><td>38</td><td>12</td><td><span class="badge">Disponible</span></td><td>Mayorista Centro</td><td>Hoy 15:10</td></tr>
+                  <tr><td>Gaseosa cola 2.25L</td><td>Bebidas</td><td>64</td><td>24</td><td><span class="badge">Disponible</span></td><td>Bebidas Litoral</td><td>Hoy 18:02</td></tr>
+                  <tr><td>Yogur frutilla 190g</td><td>Lácteos</td><td>18</td><td>16</td><td><span class="badge blue">Vence pronto</span></td><td>Lácteos Norte</td><td>Hoy 13:40</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="card" id="vencimientos">
+            <div class="card-head">
+              <div><h3>Vencimientos próximos</h3><span>Control para reducir pérdida</span></div>
+            </div>
+            <div class="alert-list">
+              <p><span>Yogur frutilla 190g</span><strong>2 días</strong></p>
+              <p><span>Pan lactal familiar</span><strong>3 días</strong></p>
+              <p><span>Queso cremoso 500g</span><strong>5 días</strong></p>
+            </div>
+          </section>
+
+          <section class="card">
+            <div class="card-head">
+              <div><h3>Tareas del equipo</h3><span>Acciones útiles del día</span></div>
+            </div>
+            <div class="task-list">
+              <label><input type="checkbox" checked> Confirmar pedido a Lácteos Norte</label>
+              <label><input type="checkbox" checked> Actualizar precio de bebidas</label>
+              <label><input type="checkbox"> Revisar góndola de limpieza</label>
+              <label><input type="checkbox"> Cargar factura de proveedor</label>
+            </div>
+          </section>
+
+          <section class="card" id="proveedores">
+            <div class="card-head">
+              <div><h3>Proveedores</h3><span>Entregas y condiciones visibles</span></div>
+            </div>
+            <div class="supplier-grid">
+              <article><strong>Lácteos Norte</strong><span>Entrega: lunes y jueves</span></article>
+              <article><strong>Bebidas Litoral</strong><span>Entrega: martes</span></article>
+              <article><strong>Mayorista Centro</strong><span>Entrega: 24 hs</span></article>
+            </div>
+          </section>
+
+          <section class="card" id="carga">
+            <div class="card-head">
+              <div><h3>Carga rápida de producto</h3><span>Formulario estático de ejemplo</span></div>
+            </div>
+            <form class="mini-form">
+              <label><span>Producto</span><input type="text" value="Leche entera 1L" readonly></label>
+              <label><span>Categoría</span><select disabled><option>Lácteos</option></select></label>
+              <label><span>Stock inicial</span><input type="text" value="24 unidades" readonly></label>
+              <label><span>Stock mínimo</span><input type="text" value="20 unidades" readonly></label>
+              <label><span>Proveedor</span><input type="text" value="Lácteos Norte" readonly></label>
+              <label><span>Precio venta</span><input type="text" value="$1.450" readonly></label>
+            </form>
+          </section>
+
+          <section class="card">
+            <div class="card-head">
+              <div><h3>Actividad reciente</h3><span>Registro de movimientos del sistema</span></div>
+            </div>
+            <ul class="activity-list">
+              <li><strong>Stock actualizado</strong><span>Gaseosa cola 2.25L · +18 unidades · hace 12 min</span></li>
+              <li><strong>Alerta generada</strong><span>Leche entera 1L debajo del mínimo · hace 18 min</span></li>
+              <li><strong>Venta registrada</strong><span>Ticket #2048 · $18.900 · hace 24 min</span></li>
+              <li><strong>Proveedor marcado</strong><span>Bebidas Litoral entrega confirmada · hace 40 min</span></li>
+            </ul>
+          </section>
+        </div>
+      </main>
+    </div>
+  </body>
+</html>
