@@ -1706,7 +1706,8 @@ p {
     var(--paper);
 }
 
-.about__image img {
+.about__image img,
+.team-portrait-card img {
   width: min(100%, 340px);
   aspect-ratio: 1 / 1.05;
   margin: 0 auto;
@@ -1714,6 +1715,61 @@ p {
   object-position: center 16%;
   border-radius: var(--radius);
   box-shadow: 0 20px 54px rgba(24, 51, 56, 0.14);
+}
+
+.team-portraits {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.team-portrait-card {
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(250, 248, 244, 0.84);
+  box-shadow: 0 20px 54px rgba(24, 51, 56, 0.1);
+}
+
+.team-portrait-card img,
+.team-placeholder {
+  width: 100%;
+  aspect-ratio: 1 / 1.05;
+  object-fit: cover;
+  object-position: center 16%;
+  box-shadow: none;
+}
+
+.team-placeholder {
+  display: grid;
+  place-items: center;
+  color: var(--cream);
+  background:
+    radial-gradient(circle at 70% 16%, rgba(250, 248, 244, 0.18), transparent 30%),
+    linear-gradient(135deg, var(--teal), var(--teal-dark));
+  font-size: 2.4rem;
+  font-weight: 900;
+}
+
+.team-portrait-card div:last-child {
+  padding: 14px;
+}
+
+.team-portrait-card strong,
+.team-portrait-card span {
+  display: block;
+}
+
+.team-portrait-card strong {
+  color: var(--teal-dark);
+  line-height: 1.2;
+}
+
+.team-portrait-card span {
+  margin-top: 4px;
+  color: rgba(43, 43, 43, 0.62);
+  font-size: 0.86rem;
+  font-weight: 800;
 }
 
 .code-card {
@@ -1822,6 +1878,29 @@ p {
 .about__content p {
   max-width: 640px;
   font-size: 1.05rem;
+}
+
+.team-members {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 24px;
+}
+
+.team-members article {
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.team-members h3 {
+  font-size: 1.05rem;
+}
+
+.team-members p {
+  margin-bottom: 0;
+  font-size: 0.94rem;
 }
 
 .tech-stack,
@@ -3730,6 +3809,29 @@ p {
   overflow-wrap: anywhere;
 }
 
+.footer-contact-list {
+  align-items: flex-start;
+}
+
+.footer-contact-list a,
+.footer-muted {
+  display: block;
+  color: var(--cream);
+  font-weight: 900;
+}
+
+.footer-contact-list small {
+  display: block;
+  margin: 3px 0 10px;
+  color: rgba(250, 248, 244, 0.62);
+  font-size: 0.76rem;
+  line-height: 1.3;
+}
+
+.footer-muted {
+  color: rgba(250, 248, 244, 0.5);
+}
+
 .footer-card em {
   display: block;
   width: fit-content;
@@ -3989,7 +4091,9 @@ p {
   .problem-grid,
   .feature-list,
   .pricing-grid,
-  .process {
+  .process,
+  .team-portraits,
+  .team-members {
     grid-template-columns: 1fr;
   }
 

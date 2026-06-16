@@ -228,7 +228,7 @@ whatsappForm?.addEventListener("submit", (event) => {
   if (!values) return;
 
   const message = [
-    "Hola Lada Elizabet Rodriguez, quiero coordinar una reunión para hablar sobre una solución digital.",
+    "Hola, quiero coordinar una reunión con el equipo para hablar sobre una solución digital.",
     `Mi nombre es ${values.nombre}.`,
     `Mi negocio o rubro es ${values.negocio}.`,
     `Necesito resolver ${values.necesidad}.`,
