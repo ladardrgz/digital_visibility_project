@@ -8,20 +8,20 @@
     <link rel="icon" href="img/logo.png">
     <style>
       :root {
-        --market: #1F6F54;
-        --market-dark: #143E35;
-        --leaf: #49A078;
-        --mint: #DDF3E8;
-        --amber: #F2B84B;
-        --orange: #D9893D;
-        --red: #D95D55;
-        --blue: #3B7CA6;
-        --paper: #F6F7F1;
+        --market: #256D85;
+        --market-dark: #12343B;
+        --leaf: #3BAA7C;
+        --mint: #E2F4EE;
+        --amber: #F0B44D;
+        --orange: #E07A3F;
+        --red: #D94B5A;
+        --blue: #4C76B8;
+        --paper: #F4F6F2;
         --white: #FFFFFF;
-        --ink: #1E2522;
-        --muted: #69736E;
-        --line: rgba(31, 111, 84, 0.16);
-        --shadow: 0 22px 64px rgba(20, 62, 53, 0.12);
+        --ink: #17282D;
+        --muted: #66777B;
+        --line: rgba(37, 109, 133, 0.16);
+        --shadow: 0 22px 64px rgba(18, 52, 59, 0.14);
         --radius: 12px;
       }
 
@@ -37,8 +37,9 @@
         margin: 0;
         color: var(--ink);
         background:
-          radial-gradient(circle at top left, rgba(73, 160, 120, 0.24), transparent 34%),
-          linear-gradient(135deg, #102A25 0%, #143E35 38%, #0F211F 100%);
+          radial-gradient(circle at top left, rgba(59, 170, 124, 0.24), transparent 34%),
+          radial-gradient(circle at 88% 8%, rgba(240, 180, 77, 0.18), transparent 26%),
+          linear-gradient(135deg, #102F3A 0%, #12343B 42%, #071B22 100%);
         font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
         line-height: 1.5;
       }
@@ -81,7 +82,7 @@
         min-height: calc(100vh - 36px);
         padding: 18px;
         color: var(--white);
-        background: rgba(15, 33, 31, 0.92);
+        background: rgba(9, 28, 35, 0.93);
         backdrop-filter: blur(14px);
       }
 
@@ -98,11 +99,20 @@
         display: grid;
         place-items: center;
         min-height: 68px;
-        border: 1px dashed rgba(255, 255, 255, 0.3);
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.14);
         border-radius: var(--radius);
         color: rgba(255, 255, 255, 0.74);
+        background: rgba(255, 255, 255, 0.08);
         font-size: 0.82rem;
         font-weight: 900;
+      }
+
+      .brand-logo img {
+        display: block;
+        width: 100%;
+        height: 82px;
+        object-fit: cover;
       }
 
       .brand strong,
@@ -211,7 +221,7 @@
         padding: 9px 11px;
         border-radius: 999px;
         color: var(--market);
-        background: rgba(31, 111, 84, 0.1);
+        background: rgba(37, 109, 133, 0.12);
         font-size: 0.84rem;
         font-weight: 900;
       }
@@ -233,7 +243,7 @@
       .back-button:focus-visible {
         background: var(--market-dark);
         transform: translateY(-2px);
-        box-shadow: 0 16px 34px rgba(20, 62, 53, 0.22);
+        box-shadow: 0 16px 34px rgba(18, 52, 59, 0.24);
       }
 
       .hero {
@@ -243,8 +253,9 @@
         padding: 24px;
         overflow: hidden;
         background:
-          radial-gradient(circle at 85% 16%, rgba(242, 184, 75, 0.26), transparent 24%),
-          linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(221, 243, 232, 0.78)),
+          radial-gradient(circle at 85% 16%, rgba(240, 180, 77, 0.24), transparent 24%),
+          radial-gradient(circle at 12% 10%, rgba(76, 118, 184, 0.11), transparent 28%),
+          linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(226, 244, 238, 0.78)),
           var(--white);
       }
 
@@ -271,14 +282,57 @@
       }
 
       .store-card__media {
+        position: relative;
         display: grid;
-        place-items: center;
-        min-height: 162px;
-        padding: 20px;
+        gap: 8px;
+        grid-template-columns: 1.35fr 0.8fr;
+        min-height: 190px;
+        padding: 12px;
         color: var(--white);
-        background: linear-gradient(135deg, var(--market), var(--market-dark));
+        background:
+          linear-gradient(135deg, rgba(37, 109, 133, 0.96), rgba(18, 52, 59, 0.96)),
+          var(--market-dark);
         text-align: center;
         font-weight: 900;
+      }
+
+      .store-card__media::after {
+        position: absolute;
+        right: 14px;
+        bottom: 14px;
+        content: "Catálogo público del supermercado";
+        max-width: 220px;
+        padding: 8px 10px;
+        border-radius: 999px;
+        color: var(--market-dark);
+        background: rgba(255, 255, 255, 0.9);
+        font-size: 0.72rem;
+        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18);
+      }
+
+      .catalog-photo {
+        overflow: hidden;
+        margin: 0;
+        border-radius: calc(var(--radius) - 2px);
+        background: rgba(255, 255, 255, 0.12);
+      }
+
+      .catalog-photo img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        min-height: 166px;
+        object-fit: cover;
+        filter: saturate(1.06) contrast(1.02);
+      }
+
+      .catalog-stack {
+        display: grid;
+        gap: 8px;
+      }
+
+      .catalog-stack .catalog-photo img {
+        min-height: 79px;
       }
 
       .store-card__body {
@@ -313,7 +367,7 @@
 
       .metrics {
         display: grid;
-        grid-template-columns: repeat(6, minmax(0, 1fr));
+        grid-template-columns: repeat(6, minmax(135px, 1fr));
         gap: 12px;
       }
 
@@ -337,9 +391,11 @@
 
       .metric strong {
         display: block;
+        max-width: 100%;
         margin: 8px 0 2px;
+        overflow-wrap: anywhere;
         color: var(--market-dark);
-        font-size: 1.7rem;
+        font-size: clamp(1.28rem, 1.65vw, 1.7rem);
         line-height: 1;
       }
 
@@ -512,7 +568,7 @@
         padding: 5px 8px;
         border-radius: 999px;
         color: var(--market);
-        background: rgba(31, 111, 84, 0.1);
+        background: rgba(37, 109, 133, 0.12);
         font-size: 0.78rem;
         font-weight: 900;
         white-space: nowrap;
@@ -683,6 +739,16 @@
           flex-direction: column;
         }
 
+        .store-card__media {
+          grid-template-columns: 1fr;
+        }
+
+        .store-card__media::after {
+          right: 18px;
+          left: 18px;
+          max-width: none;
+        }
+
         .side-nav,
         .metrics,
         .supplier-grid,
@@ -704,7 +770,9 @@
     <div class="app">
       <aside class="sidebar">
         <div class="brand">
-          <div class="brand-logo">Tu logo aparecería aquí</div>
+          <div class="brand-logo">
+            <img src="https://dummyimage.com/480x220/256d85/ffffff&text=Mercado+Norte" alt="Logo de ejemplo para un supermercado ficticio">
+          </div>
           <div>
             <strong>Supermercado de ejemplo</strong>
             <span>Gestor de stock, compras y reposición</span>
@@ -758,7 +826,19 @@
             </div>
           </div>
           <article class="store-card">
-            <div class="store-card__media">Catálogo público del supermercado</div>
+            <div class="store-card__media">
+              <figure class="catalog-photo">
+                <img src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=900&q=80" alt="Góndolas de supermercado con productos ordenados">
+              </figure>
+              <div class="catalog-stack">
+                <figure class="catalog-photo">
+                  <img src="https://images.unsplash.com/photo-1518843875459-f738682238a6?auto=format&fit=crop&w=500&q=80" alt="Verduras frescas para catálogo de supermercado">
+                </figure>
+                <figure class="catalog-photo">
+                  <img src="https://source.unsplash.com/520x360/?grocery,products" alt="Productos de almacén para catálogo digital">
+                </figure>
+              </div>
+            </div>
             <div class="store-card__body">
               <strong>Ofertas, horarios y productos visibles</strong>
               <p>Los clientes podrían consultar disponibilidad antes de escribir o acercarse al local.</p>
