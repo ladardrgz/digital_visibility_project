@@ -16,6 +16,58 @@ const demoCloseButtons = document.querySelectorAll("[data-demo-close]");
 const githubOpen = document.querySelector("[data-github-open]");
 const githubPop = document.querySelector("[data-github-pop]");
 const githubCloseButtons = document.querySelectorAll("[data-github-close]");
+const themeToggle = document.querySelector("[data-theme-toggle]");
+const colorSchemeQuery = window.matchMedia("(prefers-color-scheme: dark)");
+const themeColorMeta = document.querySelector("meta[name='theme-color']");
+const themeStorageKey = "lada-color-scheme";
+
+const getStoredTheme = () => {
+  try {
+    const storedTheme = window.localStorage.getItem(themeStorageKey);
+    return storedTheme === "dark" || storedTheme === "light" ? storedTheme : null;
+  } catch {
+    return null;
+  }
+};
+
+const setStoredTheme = (theme) => {
+  try {
+    window.localStorage.setItem(themeStorageKey, theme);
+  } catch {
+    return null;
+  }
+};
+
+const updateThemeToggle = (theme) => {
+  if (!themeToggle) return;
+
+  const isDark = theme === "dark";
+  themeToggle.setAttribute("aria-pressed", String(isDark));
+  themeToggle.setAttribute("aria-label", isDark ? "Cambiar a modo claro" : "Cambiar a modo oscuro");
+  themeToggle.title = isDark ? "Cambiar a modo claro" : "Cambiar a modo oscuro";
+};
+
+const applyColorScheme = (theme) => {
+  const selectedTheme = theme === "dark" ? "dark" : "light";
+  document.documentElement.dataset.colorScheme = selectedTheme;
+  themeColorMeta?.setAttribute("content", selectedTheme === "dark" ? "#071314" : "#27454D");
+  updateThemeToggle(selectedTheme);
+};
+
+applyColorScheme(getStoredTheme() || (colorSchemeQuery.matches ? "dark" : "light"));
+
+themeToggle?.addEventListener("click", () => {
+  const currentTheme = document.documentElement.dataset.colorScheme === "dark" ? "dark" : "light";
+  const nextTheme = currentTheme === "dark" ? "light" : "dark";
+  setStoredTheme(nextTheme);
+  applyColorScheme(nextTheme);
+});
+
+colorSchemeQuery.addEventListener?.("change", (event) => {
+  if (!getStoredTheme()) {
+    applyColorScheme(event.matches ? "dark" : "light");
+  }
+});
 
 const updateHeader = () => {
   header?.classList.toggle("is-scrolled", window.scrollY > 10);
